@@ -7,5 +7,10 @@ app = Flask(__name__)
 def index():
   return "Server is Live"
 
+@app.route('/parse-html',methods = ['POST'])
+def parseHtml():
+  return "Post response"
+
+
 if __name__ == '__main__':
   app.run(debug=True)
