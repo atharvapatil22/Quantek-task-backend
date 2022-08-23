@@ -1,5 +1,8 @@
-from distutils.log import debug
-from flask import Flask
+from flask import Flask,request
+from bs4 import BeautifulSoup
+import collections
+import json
+
 
 app = Flask(__name__)
 
@@ -9,7 +12,28 @@ def index():
 
 @app.route('/parse-html',methods = ['POST'])
 def parseHtml():
-  return "Post response"
+  
+  payload = request.json
+  parsed_html = BeautifulSoup(payload["inputHtml"],'html.parser')
+  listOfNodes = parsed_html.find("html").find_all(recursive=True)
+  duplicates = []
+
+  # Get duplicates from list of nodes
+  for node, count in collections.Counter(listOfNodes).items():
+    if count > 1:
+      duplicates.append({"node":str(node),"count":count})
+
+  # Condition to check if duplicate is already present due to parent being present
+  for i in duplicates:
+    temp = i["node"]
+    for j in duplicates:
+      t2 = j["node"]
+      if (t2 in temp) and (i["count"] == j["count"]) and i!=j:
+        duplicates.remove(j)
+
+  # Convert response to json
+  jsonResponse = json.dumps(duplicates)
+  return jsonResponse
 
 
 if __name__ == '__main__':
