@@ -22,7 +22,7 @@ def parseHtml():
   # Get duplicates from list of nodes
   for node, count in collections.Counter(listOfNodes).items():
     if count > 1:
-      duplicates.append({"node":str(node),"count":count})
+      duplicates.append({"node":str(node),"count":count,"name":node.name})
 
   # Condition to check if duplicate is already present due to parent being present
   for i in duplicates:
